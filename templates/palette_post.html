@@ -1,0 +1,273 @@
+
+{% extends "parent.html" %}
+
+{% block title %} Post - {{ the_clicked_post_id }} {% endblock %}
+
+{% block content %}
+<body>
+<div class="pure-g" style="margin-top: 70px;">
+     <div id="postBackground" class="pure-u-1-2 post_preview_box center_div" style="background-color:{{average_rgb_array[0]}}; min-width:600px; max-width:600px; margin-top:20px; padding-bottom:20px">
+          <div class="pure-g center_div">
+               <div class="pure-u-1-1">
+                    <img class="large_square_image center_image post" src="{{url_for('view_post', post_id=the_clicked_post_id)}}"/>
+               </div>
+               <div class="pure-u-2-5 right_dot">
+                    <a href="/search_result.html?search={{rgb_1_array[0]}}" class="dot large_circle" id="dot_1" style="background-color:{{rgb_1_array[0]}}"></a>
+               </div>
+               <div class="pure-u-1-5 center_dot">
+                    <a href="/search_result.html?search={{rgb_2_array[0]}}" class="dot large_circle" id="dot_2" style="background-color:{{rgb_2_array[0]}}"></a>
+               </div>
+               <div class="pure-u-2-5 left_dot">
+                    <a href="/search_result.html?search={{rgb_3_array[0]}}" class="dot large_circle" id="dot_3" style="background-color:{{rgb_3_array[0]}}"></a>
+               </div>
+               <div class="pure-u-1-1" style="display:flex; justify-content:center">
+                    <form id="form">
+                         <button type="submit" name="like" id="like" value="{{the_clicked_post_id}}" style="margin-left:auto; margin-right:auto">
+                           {% if the_clicked_post_id in post_id  %}
+                           <i class='fa fa-heart fa-xl'></i>
+                           {%else%}
+                           <i class='fa fa-regular fa-heart fa-xl'></i>
+                           {% endif %}
+                         </button>
+                       </form>
+                </div>
+          </div>
+     </div>
+
+     <script>
+          $("button").click(function(){
+            $(this).find("i").removeClass("fa fa-regular fa-heart fa-xl").addClass("fa fa-heart fa-xl");
+        });
+     </script>
+     <script>
+          $(document).on('submit','#form',function(e)
+                           {
+              console.log('hello');
+              e.preventDefault();
+              $.ajax({
+                type:'POST',
+                url:"{{url_for('like_post')}}",
+                data:{
+                  id:$("#like", this).val()
+                },
+                success:function()
+                {
+                }
+              })
+            });
+     </script>
+
+     <div id="post_info_box" class="pure-u-1-2 center post_input_box_post center_div">
+
+          <h1 id="title" class="center_text" style="background-color: rgba(150, 150, 150, 0.7); border-radius: 30px; width: 550px; height: 50px; padding-top: 8px; margin-left: 23px">{{ post_metadata }}</h1>
+          <div id="username" style="display: flex; flex-direction: row; align-items: center">
+               <div style="margin-left: auto; margin-right: auto;">
+                    <a href="{{url_for('users_profile', username=profid)}}"><h3 class="center_text"> {{ username }}</h3></a>
+               </div>
+          </div>
+          <h4 id="content" class="center_text">Content Type: {{ post_type }}</h4>
+          <h4 id="description" class="center_text" style="background-color: rgba(190, 190, 190, 0.7); border-radius: 20px; width: 570px; margin-left: 15px; padding-top: 5px; padding-bottom: 5px;">" {{ post_description }} "</h3>
+
+          {% if post_profile_id == session['profile']['user_id']  %}
+          <div id="edit_post_button" style="text-align: center; margin-top: 1em;">
+               <button class="pure-button" id="edit_post_button" onclick="editPost()" class="button-warning pure-button" style="text-align: center; margin-top: 1em">
+                    <i class="fa fa-duotone fa-pencil"></i>
+                    Edit Post
+               </button>
+          </div>
+          <div id="delete_post_button" style="text-align: center; margin-top: 1em;">
+               <form method="POST" action="{{url_for('delete_post', clicked_post_id=the_clicked_post_id)}}">
+                    <button type="submit" class="button-warning pure-button">
+                    <i class="fa fa-duotone fa-trash-can"></i>
+                    Delete Post
+                    </button>
+               </form>
+          </div>
+          {% endif %}
+     </div>
+
+     <div id="edit_post_info_box" class="pure-u-1-2 center post_input_box_post center_div" style="margin-top:50px; visibility: hidden; display: none">
+          <div id="post_title" style="text-align: center; margin-left: 6em; margin-top: 5em">
+               <button id="edit_title_button"onclick="editTitle()" class="button-warning pure-button">
+                    <i class="fa fa-duotone fa-pencil"></i>
+                    Edit Title
+               </button>
+
+               <form style="visibility: hidden; display: none;" class="pure-form" method="POST" action="{{url_for('change_title', clicked_post_id=the_clicked_post_id)}}" id="change_title_form">
+                    <div class="pure-control-group survey_margin" style="margin-left:15px">
+                         <label for="metadata">Title of Content:</label>
+                         <input type="text" name="metadata" id="metadata">
+                    </div>
+               </form>
+
+               <button  form="change_title_form" id="save_title_button" style="visibility: hidden;" class="button-warning pure-button">
+                    <i class="fa fa-duotone fa-check"></i>
+                    Save
+               </button>
+          </div>
+
+          <div id="post_types" style="text-align: center; margin-left: 6em; margin-top: 1em">
+               <button id="edit_types_button" onclick="editPostTypes()"class="button-warning pure-button">
+                    <i class="fa fa-duotone fa-pencil"></i>
+                    Edit Content Type(s)
+               </button>
+
+               <form style="visibility: hidden; display: none;" class="pure-form" method="POST" action="{{url_for('change_type', clicked_post_id=the_clicked_post_id)}}" id="change_types_form">
+                    <div class="pure-control-group survey_margin" style="margin-left:15px">
+                         <input type="checkbox" id="movieCheckbox" name="typemetadata" value="Movie"  class="check large_checkbox"/>Movie
+                         <input type="checkbox" id="bookCheckbox" name="typemetadata" value="Book"  class="check large_checkbox"/>Book
+                         <input type="checkbox" id="musicCheckbox" name="typemetadata" value="Music"  class="check large_checkbox"/>Music
+                         <input type="checkbox" id="showCheckbox" name="typemetadata" value="TV Show"  class="check large_checkbox"/>TV Show
+                    </div>
+               </form>
+
+               <button id="save_types_button" form="change_types_form" id="save_types_button" style="visibility: hidden;" class="button-warning pure-button">
+                    <i class="fa fa-duotone fa-check"></i>
+                    Save
+               </button>
+          </div>
+
+          <div id="post_desc" style="text-align: center; margin-left: 6em; margin-top: 1em">
+               <button id="edit_desc_button" onclick="editDescription()"class="button-warning pure-button">
+                    <i class="fa fa-duotone fa-pencil"></i>
+                    Edit Description
+               </button>
+
+               <form style="visibility: hidden; display: none" class="pure-form" method="POST" action="{{url_for('change_desc', clicked_post_id=the_clicked_post_id)}}" id="change_description_form">
+                    <div class="pure-control-group survey_margin" style="margin-left:15px">
+                         <textarea name="description" class="pure-input fixed_size_textarea" placeholder="Describe your post" style="width: 300px"></textarea>
+                    </div>
+               </form>
+
+               <button form="change_description_form" id="save_desc_button" style="visibility: hidden;" class="button-warning pure-button">
+                    <i class="fa fa-duotone fa-check"></i>
+                    Save
+               </button>
+          </div>
+     </div>
+     <div id="post_background" class ="pure-u-1-1" style="margin-left: 15em; margin-top: 1em; visibility: hidden;">
+          <button id="edit_background_button" onclick="editBackground()"class="button-warning pure-button">
+               <i class="fa fa-duotone fa-pencil"></i>
+               Edit Background Color
+          </button>
+
+          <form style="visibility: hidden; display: none" class="pure-form" method="POST" action="{{url_for('change_background', clicked_post_id=the_clicked_post_id)}}" id="change_background_form">
+               <div class="pure-control-group survey_margin" style="margin-left:15px">
+                    <button class="pure-button pure-button-primary" id="postBackgroundColorPicker" data-jscolor="{width:250, paletteCols:15, value:'rgba(180,180,180,0.8)', onChange:'update(this)'}"></button>
+                    <input id="colorPicked" name="background" style="display: none"></input>
+               </div>
+          </form>
+
+          <button form="change_background_form" id="save_background_button" style="visibility: hidden;" class="button-warning pure-button">
+               <i class="fa fa-duotone fa-check"></i>
+               Save
+          </button>
+     </div>
+</div>
+
+</body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jscolor/2.4.7/jscolor.min.js"></script>
+
+<script>
+     let poster_clicked = false;
+
+     let editTitleButton;
+     let saveTitleButton;
+
+     let editTypesButton;
+     let saveTypesButton;
+
+     let editDescButton;
+     let saveDescButton;
+
+     let editBackgroundButton;
+     let postBackgroundColorPicker;
+     let saveBackgroundButton;
+
+     let changeTitleForm;
+     let changeTypesForm;
+     let changeDescriptionForm;
+     let changeBackgroundForm;
+
+     function editPost() {
+          document.getElementById("post_info_box").style.height = "400px";
+          document.getElementById("post_info_box").innerHTML = document.getElementById("edit_post_info_box").innerHTML;
+          document.getElementById("post_background").style.visibility = "visible";
+     }
+
+     function createdPost() {
+          if(poster_clicked == false){
+               poster_clicked = true;
+               editTitleButton = document.getElementById("edit_title_button");
+               saveTitleButton = document.getElementById("save_title_button");
+
+               editTypesButton = document.getElementById("edit_types_button");
+               saveTypesButton = document.getElementById("save_types_button");
+
+               editDescButton = document.getElementById("edit_desc_button");
+               saveDescButton = document.getElementById("save_desc_button");
+
+               editBackgroundButton = document.getElementById("edit_background_button");
+               saveBackgroundButton = document.getElementById("save_background_button");
+
+               changeTitleForm = document.getElementById("change_title_form");
+               changeTypesForm = document.getElementById("change_types_form");
+               changeDescriptionForm = document.getElementById("change_description_form");
+               changeBackgroundForm = document.getElementById("change_background_form");
+          }
+     }
+
+     function editTitle() {
+          createdPost();
+
+          editTitleButton.style.visibility = "hidden";
+          editTitleButton.style.display = "none";
+          saveTitleButton.style.visibility = "visible";
+
+          changeTitleForm.style.visibility = "visible";
+          changeTitleForm.style.display = "inline-block";
+     }
+
+     function editPostTypes() {
+          createdPost();
+
+          editTypesButton.style.visibility = "hidden";
+          editTypesButton.style.display = "none";
+          saveTypesButton.style.visibility = "visible";
+
+          changeTypesForm.style.visibility = "visible";
+          changeTypesForm.style.display = "inline-block";
+
+     }
+
+     function editDescription() {
+          createdPost();
+
+          editDescButton.style.visibility = "hidden";
+          editDescButton.style.display = "none";
+          saveDescButton.style.visibility = "visible";
+
+          changeDescriptionForm.style.visibility = "visible";
+          changeDescriptionForm.style.display = "inline-block";
+     }
+
+     function editBackground() {
+          createdPost();
+
+          editBackgroundButton.style.visibility = "hidden";
+          editBackgroundButton.style.display = "none";
+          saveBackgroundButton.style.visibility = "visible";
+
+          changeBackgroundForm.style.visibility = "visible";
+          changeBackgroundForm.style.display = "inline-block";
+     }
+
+     function update(picker) {
+          var colorPickedField = document.getElementById("colorPicked");
+          var colorPicked = picker.toRGBAString();
+          colorPickedField.value = colorPicked;
+          document.getElementById('postBackground').style.backgroundColor= colorPicked;
+     }
+</script>
+{% endblock %}

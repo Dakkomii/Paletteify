@@ -1,0 +1,113 @@
+<!-- the html for when the user clicks profile button (not implemented rn) in header -->
+{% extends "profile.html" %}
+
+{% block title %} Edit Profile - {{ session['profile']['name'] }} {% endblock %}
+
+{% block header %} 
+<li class="pure-menu-item">
+     <a href="/profile" class="pure-menu-link">
+       <img src="{{session['profile']['picture']}}" width="25px" height="25px" id="profileimg"> 
+       Profile
+     </a>
+</li>
+{% endblock %}
+
+{% block content %}
+<body id="bgBody">
+     <div class="flex-container-edit">
+          <div id="new-profile" class="new">
+               <p id="preview">Preview: Background Color</p>
+               <div class="flex-child-edit photo">
+                    <p></p>
+                    <img class="profile" style="display:block; margin-left:auto; margin-right:auto;" src="{{session['profile']['picture']}}" id="profileimg"> 
+               </div>
+               <div class="flex-child-edit username">
+                    <h4>{{ username }}</h4>
+               </div>
+
+               <div class="pure g posts">
+                    {% for id in post_ids %}
+                         <div style="background-color:{{average_rgb_array[loop.index0]}}" id="palette_background" class="pure-g center_div survey_margin palette-edit">
+                              <div class="pure-u-1-1" style="display:flex; justify-content: center">
+                                   <img class="square_image center_image" src="{{url_for('view_post', post_id=id)}}" style="width:150px; height:150px"/>     
+                              </div>
+                              <div class="pure-u-2-5 right_dot">
+                              <span class="dot circle" id="dot_1" style="background-color:{{rgb_1_array[loop.index0]}}; height:40px; width:40px"></span>
+                              </div>
+                              <div class="pure-u-1-5 center_dot">
+                              <span class="dot circle" id="dot_2" style="background-color:{{rgb_2_array[loop.index0]}}; height:40px; width:40px"></span>
+                              </div>
+                              <div class="pure-u-2-5 left_dot">
+                              <span class="dot circle" id="dot_3" style="background-color:{{rgb_3_array[loop.index0]}}; height:40px; width:40px"></span>
+                              </div>
+                         </div>
+                    {% endfor %}
+               </div>
+
+          </div>
+
+          <div id="current-profile" class="flex-child-edit current">
+               <div class="flex-child-edit profile-edit">
+                    <img class="profile" style="display:block; margin-left:auto; margin-right:auto;" src="{{session['profile']['picture']}}" id="profileimg"> 
+               </div>
+               
+               <div class="flex-child-edit username-edit">
+                    <h4>Username: {{ username }}</h4>
+               </div>
+
+               <div class="flex-child-edit username-edit-action">
+                    <form class="pure-form" method="POST" action="/editUsername">
+                         <input class="username-input pure-input-rounded" type="text" name="editUsernameInput" id="editUsernameInput" style="display:none;">
+                         <p></p>
+                         <button class="pure-button" for="editUsernameInput" id="editUsernameButton" onclick="displayUsernameInput(event)">
+                              <i class="fa fa-duotone fa-pencil"></i>
+                              Edit Username
+                         </button>
+                         <button type="submit" class="pure-button" id="saveUsernameButton" style="display:none; margin-left: 1.5em;">
+                              <i class="fa fa-duotone fa-check"></i>
+                              Save Username
+                         </button>
+                    </form>
+               </div>
+
+               <div class="flex child-edit background-edit">
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/jscolor/2.4.7/jscolor.min.js"></script>
+
+                    <form class="pure-form" method="POST" action="{{url_for('edit_background_color')}}">
+                         <button class="pure-button pure-button-primary" id="firstColorPicker" data-jscolor="{width:250, paletteCols:15, value:'rgba(180,180,180,0.8)', onChange:'update1(this)'}"></button>
+                         <button class="pure-button pure-button-primary" id="secondColorPicker" data-jscolor="{width:250, paletteCols:15, value:'rgba(180,180,180,0.8)', onChange:'update2(this)'}"></button>
+                         <input id="firstColorPicked" name="firstColorPicked" style="display:none"></input>
+                         <input id="secondColorPicked" name="secondColorPicked" style="display:none"></input>
+                         <button type="submit" class="pure-button pure-button-primary" id="backgroundColorButton">
+                              <i class="fa fa-duotone fa-check"></i>
+                              Save Background Color
+                         </button>
+                    </form>
+     
+                    <script>
+                         var firstColorPicked = "rgba(94,95,94,1)";
+                         var secondColorPicked = "rgba(94,95,94,1)";
+
+                         function update1(picker) {
+                              var firstColorPickedField = document.getElementById("firstColorPicked");
+                              firstColorPicked = picker.toRGBAString();
+                              firstColorPickedField.value = firstColorPicked;
+                              document.getElementById('new-profile').style.backgroundImage="linear-gradient(to bottom right," + firstColorPicked +  ", " + secondColorPicked +  ")";
+                         }
+     
+                         function update2(picker) {
+                              var secondColorPickedField = document.getElementById("secondColorPicked");
+                              secondColorPicked = picker.toRGBAString();
+                              secondColorPickedField.value = secondColorPicked;
+                              document.getElementById('new-profile').style.backgroundImage="linear-gradient(to bottom right," + firstColorPicked +  ", " + secondColorPicked + ")";
+                         }
+                    </script>
+               </div>       
+          </div>
+
+          <script>
+               document.body.style.backgroundImage ='linear-gradient(to bottom right, {{ background1 }}, {{ background2 }})';
+          </script>
+     </div>
+</body>
+{% endblock %}

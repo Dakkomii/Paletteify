@@ -1,0 +1,130 @@
+<!-- the html for when the user clicks upload button (not implemented rn) in header -->
+{% extends "parent.html" %}
+
+{% block title %} Upload {% endblock %}
+
+{% block content %}
+
+<div class="pure-g" style="margin-top: 70px;">
+  <div class="pure-u-1-2 post_preview_box center_div" style="display:none; min-width:600px; max-width:600px; margin-top:20px; padding-bottom:20px" id="post_preview">
+    <div class="pure-g center_div">
+      <div class="pure-u-1-1">
+        <img class="large_square_image center_image" id="image_placeholder" style="display:none"/>
+      </div>
+      <div class="pure-u-2-5 right_dot">
+        <span class="dot large_circle" id="dot_1" style="display:none"></span>
+      </div>
+      <div class="pure-u-1-5 center_dot">
+        <span class="dot large_circle" id="dot_2" style="display:none"></span>
+      </div>
+      <div class="pure-u-2-5 left_dot">
+        <span class="dot large_circle" id="dot_3" style="display:none"></span>
+      </div>
+    </div>
+  </div>
+  <div class="pure-u-1-2 center post_input_box center_div" style="margin-top:50px;">
+    <h2 class="center_text" id="select_prompt">Select Your Image</h2>
+    <form class="pure-form" method="post" enctype="multipart/form-data" action="{{url_for("upload_post")}}" id="form1">
+      <fieldset>
+        <div class="pure-control-group survey_margin" style="margin-left:15px">
+          <input type="file" name="image" accept="image/jpeg,image/png" id="image" onchange="showimage(event)" required/>
+          <input type="text" name="rgb_average" class="pure-input" id="rgb_average" style="display:none">
+          <input type="text" name="rgb_1" id="rgb_1" style="display:none">
+          <input type="text" name="rgb_2" id="rgb_2" style="display:none">
+          <input type="text" name="rgb_3" id="rgb_3" style="display:none">
+        </div>
+        <div class="pure-control-group survey_margin" style="margin-left:15px">
+          <label for="metadata">Title of Content:</label>
+          <input type="text" name="metadata" id="metadata">
+
+          <label for="checkbox-option" class="pure-checkbox" style="margin-top: 20px;">Type of Content:</label>
+          <input type="checkbox" id="movieCheckbox" name="typemetadata" value="Movie"  class="check large_checkbox"/><text>Movie</text>
+          <input type="checkbox" id="bookCheckbox" name="typemetadata" value="Book"  class="check large_checkbox"/><text>Book</text>
+          <input type="checkbox" id="musicCheckbox" name="typemetadata" value="Music"  class="check large_checkbox"/><text>Music</text>
+          <input type="checkbox" id="showCheckbox" name="typemetadata" value="TV Show"  class="check large_checkbox"/><text>TV Show</text>
+        </div>
+        <div class="pure-control-group survey_margin" style="margin-left:15px">
+          <textarea name="description" class="pure-input fixed_size_textarea" placeholder="Describe your post"></textarea>
+        </div>
+        <div class="pure-controls survey_margin center_text">
+          <button type="submit" class="pure-button pure-button-primary" id="submitbutton" onclick="convert(); disableButton();">Post</button>
+        </div>
+        <div class="pure-controls survey_margin center_text">
+          <a class="pure-button pure-button" href="{{url_for("post_gallery")}}">Cancel</a>
+        </div>
+      </fieldset>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.0/color-thief.umd.js"></script>
+<script>
+function disableButton() {
+  const button = document.getElementById('submitbutton');
+  button.innerText = "Posting...";
+  button.disabled = true;
+}
+
+function show_palette(rgb1, rgb2, rgb3, rgb4){
+  var dot_1 = document.getElementById('dot_1');
+  var dot_2 = document.getElementById('dot_2');
+  var dot_3 = document.getElementById('dot_3');
+  //var palette_background = document.getElementById('palette_background');
+  dot_1.style.backgroundColor = "rgb(" + rgb1[0] + "," + rgb1[1] + "," + rgb1[2] + ")";
+  dot_2.style.backgroundColor = "rgb(" + rgb2[0] + "," + rgb2[1] + "," + rgb2[2] + ")";
+  dot_3.style.backgroundColor = "rgb(" + rgb3[0] + "," + rgb3[1] + "," + rgb3[2] + ")";
+  //palette_background.backgroundColor = "rgba(" + rgb4[0] + "," + rgb4[1] + "," + rgb4[2] + ", 0.9)";
+  dot_1.style.display = "inline-block";
+  dot_2.style.display = "inline-block";
+  dot_3.style.display = "inline-block";
+  var post_preview = document.getElementById('post_preview');
+  post_preview.style.backgroundColor = "rgba(" + rgb4[0] + "," + rgb4[1] + "," + rgb4[2] + ", 0.9)";
+  //var spacer = document.getElementById('spacer');
+  //spacer.style.display = "none";
+  post_preview.style.display = "inline-block";
+}
+
+function set_input(palette){
+  var rgb1 = palette[0];
+  var rgb2 = palette[1];
+  var rgb3 = palette[2];
+  var rgb4 = palette[3];
+  var rgb_average_input = document.getElementById("rgb_average");
+  var rgb_1_input = document.getElementById("rgb_1");
+  var rgb_2_input = document.getElementById("rgb_2");
+  var rgb_3_input = document.getElementById("rgb_3");
+  rgb_average_input.value = "rgba(" + rgb4[0] + "," + rgb4[1] + "," + rgb4[2] + ", 0.9)";
+  rgb_1_input.value = "rgb(" + rgb1[0] + "," + rgb1[1] + "," + rgb1[2] + ")";
+  rgb_2_input.value = "rgb(" + rgb2[0] + "," + rgb2[1] + "," + rgb2[2] + ")";
+  rgb_3_input.value = "rgb(" + rgb3[0] + "," + rgb3[1] + "," + rgb3[2] + ")";
+  show_palette(rgb1, rgb2, rgb3, rgb4);
+}
+
+function get_rgb(){
+  const colorThief = new ColorThief();
+  const img = document.getElementById('image_placeholder');
+  var img_palette = [];
+  // Make sure image is finished loading
+  if (img.complete) {
+    img_palette = colorThief.getPalette(img, 4);
+    set_input(img_palette);
+  } else {
+    img.addEventListener('load', function() {
+      img_palette = colorThief.getPalette(img, 4);
+      set_input(img_palette);
+    });
+  }
+}
+
+var showimage = function(event){
+  var img = document.getElementById('image_placeholder');
+  img.src = URL.createObjectURL(event.target.files[0]);
+  // var select_prompt = document.getElementById('select_prompt');
+  // select_prompt.style.display = "none";
+  img.style.display = "block";
+  get_rgb();
+};
+
+</script>
+
+{% endblock %}

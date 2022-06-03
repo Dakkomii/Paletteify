@@ -1,0 +1,22 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+flask = "*"
+psycopg2-binary = "*"
+gunicorn = "*"
+python-dotenv = "*"
+requests = "*"
+setuptools = "*"
+authlib = "*"
+six = "*"
+webcolors = "*"
+numpy = "*"
+tensorflow-cpu = "1.14"
+
+[dev-packages]
+
+[requires]
+python_version = "*"

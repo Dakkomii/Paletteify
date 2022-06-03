@@ -1,0 +1,98 @@
+{% extends "profile.html" %}
+
+{% block title %} Profile - {{ username }} {% endblock %}
+
+{% block header %}
+{% if 'profile' in session %}
+      <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+        <a href="/profile" class="pure-menu-link">
+          <img src="{{session['profile']['picture']}}" width="25px" height="25px" id="profileimg">
+          Profile
+        </a>
+        <ul class="pure-menu-children">
+          <li class="pure-menu-item">
+               <a href="{{ url_for('liked_post') }}" class="pure-menu-link">
+                    <i class='fa fa-heart'></i>
+                    Favorites
+               </a>
+          </li>
+          </ul>
+      </li>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<body id="profile-page-contents" style="margin-top: 70px;">
+     <div id="profile-page-content" class="flex-container-profile">
+
+          <div class="flex-child-profile photo">
+               <img class="profile" style="display:block; margin-left:auto; margin-right:auto; margin-top: 30px;" src="{{ person[0]['image'] }}" id="profileimg">
+          </div>
+          <div class = "flex-child-profile name">
+               {% block name %}<h4>{{ username }}</h4>{% endblock %}
+          </div>
+
+          <div class="pure-g">
+               {% for id in post_ids %}
+                    <div style="background-color:{{average_rgb_array[loop.index0]}}" id="palette_background" class="pure-g center_div survey_margin palette">
+                         <div class="pure-u-1-1" style="display:flex; justify-content: center">
+                              <a href="{{url_for('clicked_post', clicked_post_id=id)}}">
+                                   <img class="square_image center_image" src="{{url_for('view_post', post_id=id)}}"/>
+                              </a>
+                         </div>
+                         <div class="pure-u-2-5 right_dot">
+                              <span class="dot circle" id="dot_1" style="background-color:{{rgb_1_array[loop.index0]}}"></span>
+                         </div>
+                         <div class="pure-u-1-5 center_dot">
+                              <span class="dot circle" id="dot_2" style="background-color:{{rgb_2_array[loop.index0]}}"></span>
+                         </div>
+                         <div class="pure-u-2-5 left_dot">
+                              <span class="dot circle" id="dot_3" style="background-color:{{rgb_3_array[loop.index0]}}"></span>
+                         </div>
+                         {% if 'profile' in session %}
+                         <div class="pure-u-1-1">
+                              <form id="form">
+                                   <button type="submit" name="like" id="like" value="{{id}}" >
+                                     <!-- <i class="fa fa-regular fa-heart fa-xl"></i> -->
+                                     {% if id in post_id  %}
+                                     <i class='fa fa-heart fa-xl'></i>
+                                     {%else%}
+                                     <i class='fa fa-regular fa-heart fa-xl'></i>
+                                     {% endif %}
+                                   </button>
+                                 </form>
+                         </div>
+                         {% endif %}
+                    </div>
+               {% endfor %}
+          </div>
+     </div>
+</body>
+
+<script>
+     $("button").click(function(){
+       $(this).find("i").removeClass("fa fa-regular fa-heart fa-xl").addClass("fa fa-heart fa-xl");
+   });
+   </script>
+<script>
+     $(document).on('submit','#form',function(e)
+                      {
+         console.log('hello');
+         e.preventDefault();
+         $.ajax({
+           type:'POST',
+           url:"{{url_for('like_post')}}",
+           data:{
+             id:$("#like", this).val()
+           },
+           success:function()
+           {
+           }
+         })
+       });
+   </script>
+<script>
+     document.getElementById('profile-page-contents').style.backgroundImage='linear-gradient(to bottom right, {{ background1 }}, {{ background2 }})';
+</script>
+
+{% endblock %}

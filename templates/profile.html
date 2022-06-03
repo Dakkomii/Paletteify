@@ -1,0 +1,65 @@
+{% extends "parent.html" %}
+{% import "home.html" as home %}
+
+{% block title %} Profile - {{ session['profile']['name']}} {% endblock %}
+
+{% block header %}
+<li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+     <a href="/editProfile" class="pure-menu-link">
+          <i class="fa fa-duotone fa-user-pen"></i>
+          Edit Profile
+     </a>
+
+     <ul class="pure-menu-children">
+          <li class="pure-menu-item">
+               <a href="{{ url_for('liked_post') }}" class="pure-menu-link">
+                    <i class='fa fa-heart'></i>
+                    Favorites
+               </a>
+          </li>
+     </ul>
+</li>
+{% endblock %}
+
+{% block content %}
+<body id="profile-page-contents" style="margin-top: 70px;">
+     <div id="profile-page-content" class="flex-container-profile">
+
+          <div class="flex-child-profile photo">
+               <p></p>
+               <img class="profile" style="display:block; margin-left:auto; margin-right:auto;" src="{{session['profile']['picture']}}" id="profileimg">
+          </div>
+
+          <div class = "flex-child-profile name">
+               {% block name %}<h4>{{ username }}</h4>{% endblock %}
+          </div>
+
+          <div class="pure-g">
+               {% for id in post_ids %}
+
+                    
+                    <div style="background-color:{{average_rgb_array[loop.index0]}}" id="palette_background" class="pure-g center_div survey_margin palette">
+                         <div class="pure-u-1-1" style="display:flex; justify-content: center">
+                              <a href="{{url_for('clicked_post', clicked_post_id=id)}}">
+                                   <img class="square_image center_image" src="{{url_for('view_post', post_id=id)}}"/>
+                              </a>
+                         </div>
+                         <div class="pure-u-2-5 right_dot">
+                              <a href="/search_result.html?search={{rgb_1_array[loop.index0]}}" class="dot circle" id="dot_1" style="background-color:{{rgb_1_array[loop.index0]}}"></a>
+                         </div>
+                         <div class="pure-u-1-5 center_dot">
+                              <a href="/search_result.html?search={{rgb_2_array[loop.index0]}}" class="dot circle" id="dot_2" style="background-color:{{rgb_2_array[loop.index0]}}"></a>
+                         </div>
+                         <div class="pure-u-2-5 left_dot">
+                              <a href="/search_result.html?search={{rgb_3_array[loop.index0]}}" class="dot circle" id="dot_3" style="background-color:{{rgb_3_array[loop.index0]}}"></a>
+                         </div>
+                    </div>
+               {% endfor %}
+          </div>
+     </div>
+</body>
+
+<script>
+     document.getElementById('profile-page-contents').style.backgroundImage='linear-gradient(to bottom right, {{ background1 }}, {{ background2 }})';
+</script>
+{% endblock %}

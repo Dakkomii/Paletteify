@@ -1,0 +1,73 @@
+{% extends "parent.html" %}
+
+{% block title %} Home {% endblock %}
+
+{% block content %}
+
+<script
+  src="https://code.jquery.com/jquery-3.6.0.min.js"
+  integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+  crossorigin="anonymous">
+</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<h1>Welcome to Paletteify!</h1>
+
+<div class="pure-g">
+  {% for id in post_ids %}
+    <div style="background-color:{{average_rgb_array[loop.index0]}}" id="palette_background" class="pure-g center_div survey_margin palette">
+      <div class="pure-u-1-1" style="display:flex; justify-content:center">
+        <a href="{{url_for('clicked_post', clicked_post_id=id)}}">
+          <img class="square_image center_image" src="{{url_for('view_post', post_id=id)}}"/>
+        </a>
+      </div>
+      <div class="pure-u-2-5 right_dot">
+        <a href="/search_result.html?search={{rgb_1_array[loop.index0]}}" class="dot circle" id="dot_1" style="background-color:{{rgb_1_array[loop.index0]}}"></a>
+      </div>
+      <div class="pure-u-1-5 center_dot">
+        <a href="/search_result.html?search={{rgb_2_array[loop.index0]}}" class="dot circle" id="dot_2" style="background-color:{{rgb_2_array[loop.index0]}}"></a>
+      </div>
+      <div class="pure-u-2-5 left_dot">
+        <a href="/search_result.html?search={{rgb_3_array[loop.index0]}}" class="dot circle" id="dot_3" style="background-color:{{rgb_3_array[loop.index0]}}"></a>
+      </div>
+      {% if 'profile' in session %}
+      <div class="pure-u-1-1" style="display:flex; justify-content:center">
+        <form id="form">
+            <button type="submit" name="like" id="like" value="{{id}}" style="margin-left:auto; margin-right:auto">
+              {% if id in post_id  %}
+              <i class='fa fa-heart fa-xl'></i>
+              {%else%}
+              <i class='fa fa-regular fa-heart fa-xl'></i>
+              {% endif %}
+            </button>
+          </form>
+      </div>
+      {% endif %}
+    </div>
+  {% endfor %}
+</div>
+
+<script>
+  $("button").click(function(){
+    $(this).find("i").removeClass("fa fa-regular fa-heart fa-xl").addClass("fa fa-heart fa-xl");
+});
+</script>
+<script>
+  $(document).on('submit','#form',function(e)
+                   {
+      console.log('hello');
+      e.preventDefault();
+      $.ajax({
+        type:'POST',
+        url:"{{url_for('like_post')}}",
+        data:{
+          id:$("#like", this).val()
+        },
+        success:function()
+        {
+        }
+      })
+    });
+</script>
+
+{% endblock %}

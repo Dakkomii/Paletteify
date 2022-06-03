@@ -1,0 +1,204 @@
+{% extends "parent.html" %}
+
+{% block title %} About Us {% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="/static/about_us.css">
+
+<div class="page-margin">
+    <h1>Why Paletteify?</h1>
+
+    <section class="hero">
+        <div class="card-container flip-vertically">
+            <img src="https://i.postimg.cc/wBqdMb9R/colorpalette1.png">
+        </div>
+        <div class="intro-text">
+        <p class="first">
+            Looking for new ways to share your favorite <strong class="red">movies</strong>, <strong class="dark_pink">books</strong>, and <strong class="burgundy">albums</strong>?
+        </p>
+        <p class="second">
+            Create a visual aesthetic of recommendations with <strong class="pink">Paletteify</strong>!
+        </p>
+        </div>
+    </section>
+
+    <h1>How To Use Paletteify</h1>
+
+    <div class="pure-g box">
+        {% if 'profile' not in session %}
+        <div class="pure-u-1-1 lightest_grey">
+            <div class="pure-menu pure-menu-horizontal about_us_text_instructions">
+            <li class="pure-menu-item">
+                <a href="/login" class="pure-menu-link pure-button">Login</a>
+            </li>
+            </div>
+            <div class="about_us_text_instructions">Login/Sign Up to have access to all abilities of Paletteify</div>
+
+        </div>
+        {% endif %}
+        
+        <div class="pure-u-1-1 medium_grey">
+            <div class="pure-menu pure-menu-horizontal about_us_text_instructions">
+                {% if 'profile' not in session %}
+                <div class="about_us_text_instructions">Upload</div>
+                <div class="about_us_text_small">(You need to be logged in to gain Upload access)</div>
+                {% endif %}
+                {% if 'profile' in session %}
+                <li class="pure-menu-item">
+                    <a href="/upload" class="pure-menu-link pure-button">
+                    <i class="fas fa-duotone fa-upload" style="font-size:20px;"></i>
+                    Upload
+                    </a>
+                </li>
+                {% endif %}
+            </div>
+            <div class="about_us_text_instructions page-margin">Upload a photo of a book cover, movie poster, or album artwork. A color palette will be automatically generated. Enter the title of the book/movie/album and a description and click <strong class="black">Post</strong>. The post will now be publicly visible on the home page, your profile page, and among search results.</div>
+        </div>
+        <div class="pure-u-1-1 lightest_grey">
+            <div class="pure-menu pure-menu-horizontal about_us_text_instructions">
+                <li class="pure-menu-item">
+                    <a href="{{ url_for("search") }} " class="pure-menu-link pure-button"><i class="fa fa-duotone fa-magnifying-glass"></i> Search</a>
+                </li>
+            </div>
+            <p class="about_us_text_instructions"> <strong class="black">Look for new media through aesthetic matches!</strong></p>
+            <div class="pure-u-1-1">
+                <div class="about_us_text_instructions">Select a color button to find that aesthetic:</div>
+                <div class="color-buttons">
+                    <div title="red">
+                      <a href="/search_result.html?search=red" class="circle color-buttons-red"></a>
+                    </div>
+                    <div title="pink">
+                      <a href="/search_result.html?search=pink" class="circle color-buttons-pink" ></a>
+                    </div>
+                    <div title="orange">
+                      <a href="/search_result.html?search=orange" class="circle color-buttons-orange" ></a>
+                    </div>
+                    <div title="yellow">
+                      <a href="/search_result.html?search=yellow" class="circle color-buttons-yellow" ></a>
+                    </div>
+                    <div title="green">
+                      <a href="/search_result.html?search=green" class="circle color-buttons-green" ></a>
+                    </div>
+                    <div title="blue">
+                      <a href="/search_result.html?search=blue" class="circle color-buttons-blue" ></a>
+                    </div>
+                    <div title="purple" >
+                      <a href="/search_result.html?search=purple" class="circle color-buttons-purple" ></a>
+                    </div>
+                    <div title="brown">
+                      <a href="/search_result.html?search=brown" class="circle color-buttons-brown" ></a>
+                    </div>
+                    <div title="gray">
+                        <a href="/search_result.html?search=gray" class="circle color-buttons-gray" ></a>
+                      </div>
+                    <div title="black&white">
+                      <a href="/search_result.html?search=grey" class="circle color-buttons-blackandwhite" ></a>
+                    </div>
+                  </div>
+            </div>
+
+            <div style="background:rgb(230, 225, 225);">
+                <div class="searchdiv" style="margin-top:4em">
+                    <form class="search pure-form" method="get" action="search_result.html" >
+                      <div style="text-align:center;">
+                        <input id="searchBar" type="text" style="margin-top:4em" class="search-form pure-input-rounded" name="search" placeholder="type: movie, book, music, or a color" width="500px"/>
+                        <button type="submit" class="pure-button" style="margin-top:4em">
+                          <i class="fa fa-duotone fa-magnifying-glass"></i>
+                          Search
+                        </button>
+                      </div>
+                    </form>
+                </div>
+                <div class="about_us_text_instructions"  > Or with the search bar, you can either...</div>
+                <div class="pure-g">
+                    <div class="pure-u-1-3">
+                        <div class="about_us_text_instructions">Search By Title</div>
+                        <div class="about_us_text_instructions">If you're looking for a particular media, try typing the title</div>
+                        <img style="width:100%" src="https://i.postimg.cc/JnKjsTz8/Screen-Shot-2022-03-20-at-2-15-56-PM.png">
+                    </div>
+                    <div class="pure-u-1-3" style=" margin-bottom: 4em;">
+                        <div class="about_us_text_instructions">Search By Category</div>
+                        <div class="about_us_text_instructions">Type a category name to look specifically for that type of content. Types of content:</div>
+
+                            <div class="light_pink page-margin">
+                                <div class="about_us_text-center">Movie</div>
+                            </div>
+                            <div class="medium_pink page-margin">
+                                <div class="about_us_text-center">Book</div>
+                            </div>
+                            <div class="dark_pink page-margin">
+                                <div class="about_us_text-center">Music</div>
+                            </div>
+                            <div class="page-margin" style="background: rgb(255, 201, 201);">
+                                <div class="about_us_text-center">TV Show</div>
+                            </div>
+                    </div>
+                    <div class="pure-u-1-3">
+                        <div class="about_us_text_instructions">Search By Color</div>
+                        <div class="about_us_text_instructions">Type the name of a color into the search bar to find a narrower aesthetic of recommendations</div>
+                        <div class="about_us_text_instructions lightpink" style="margin-top:-1.5em">lightpink</div>
+                        <div class="about_us_text_instructions coral" style="margin-top:-1.5em">coral</div>
+                        <div class="about_us_text_instructions crimson" style="margin-top:-1.5em">crimson</div>
+                        <a href="https://www.w3schools.com/cssref/css_colors.asp" class="about_us_text_instructions center_links" style="margin-top:-1.5em">Click here to see all color name options</a>
+                    </div>
+                    
+                </div>
+            </div>
+            
+            <div class="pure-u-1-1">
+                <p class="about_us_text_instructions" style="margin-bottom: -1em; margin-top: 0em;"> <strong class="black">Fun Fact</strong></p>
+                <div class="about_us_text_instructions">You can also click on any palette circle <br />under posts to find all posts containing that shade!</div>
+                <div class="pure-u-1-1">
+                    <img src="https://i.postimg.cc/Z52HZYfS/Screen-Shot-2022-03-20-at-2-41-26-PM.png" class="center ">
+                </div>
+            </div>
+            </div>
+    </div>
+
+    <div class="light-background box">
+        <h1>The Paletteify Team</h1>
+        <div class="pure-g box">
+            <div class="pure-u-1-5">
+                <div class="about_us_text_small">Erik Rossing</div>
+            </div>
+            <div class="pure-u-1-5">
+                <div class="about_us_text_small">Lana Berge</div>
+            </div>
+            <div class="pure-u-1-5">
+                <div class="about_us_text_small">Khalid Ahmed</div>
+            </div>
+            <div class="pure-u-1-5">
+                <div class="about_us_text_small">Luisa Jimenez Alarcon</div>
+            </div>
+            <div class="pure-u-1-5">
+                <div class="about_us_text_small">Amelie Elmquist</div>
+            </div>
+        </div>
+        <h1>Tools Utilized</h1>
+        <div class="pure-g">
+            <div class="pure-u-1-2">
+                <div class="about_us_text_small">Color Thief</div>
+                <div class="about_us_text_small">Created by Lokesh Dhakar, Color Thief is an API that extracts dominant colors from an image input.</div>
+                <a href="https://lokeshdhakar.com/projects/color-thief/#api" class="about_us_text_small center_links">Learn More</a>
+            </div>
+            <div class="pure-u-1-2">
+                <div class="about_us_text_small">Webcolors</div>
+                <div class="about_us_text_small">A Python library. It allows the conversion from certain RGB values to their CSS color name equivalents.</div>
+                <a href="https://medium.com/codex/rgb-to-color-names-in-python-the-robust-way-ec4a9d97a01f" class="about_us_text_small center_links">Learn More</a>
+            </div>
+        </div>
+        <div class="pure-g">
+            <div class="pure-u-1-2">
+                <div class="about_us_text_small">JSColor</div>
+                <div class="about_us_text_small">A JavaScript library. It's a color picker dropdown that we utilized to allow customization to profile page backgrounds.</div>
+                <a href="https://jscolor.com/" class="about_us_text_small center_links">Learn More</a>
+            </div>
+            <div class="pure-u-1-2">
+                <div class="about_us_text_small">RGB Color Classifier</div>
+                <div class="about_us_text_small">Ajinkya Chavan worked with Tensorflow to create a way of color classifying that helped us with categorizing posts into our 10 aesthetic categories.</div>
+                <a href="https://medium.com/analytics-vidhya/building-rgb-color-classifier-part-2-8c49a57f6b91" class="about_us_text_small center_links">Learn More</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
